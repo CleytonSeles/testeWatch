@@ -2,10 +2,33 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import vuetify from './plugins/vuetify'
-import axios from 'axios'
+import { createVuetify } from 'vuetify'
+import 'vuetify/styles'
+import '@mdi/font/css/materialdesignicons.css'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+
+// Configuração do Vuetify
+const vuetify = createVuetify({
+  components,
+  directives,
+  theme: {
+    defaultTheme: 'dark',
+    themes: {
+      dark: {
+        colors: {
+          primary: '#1DB954',
+          secondary: '#191414',
+          background: '#121212',
+          surface: '#181818',
+        }
+      }
+    }
+  }
+})
 
 // Configuração global do axios
+import axios from 'axios'
 axios.defaults.baseURL = 'http://localhost:3000/api'
 
 // Interceptor para adicionar o token de autenticação
@@ -27,4 +50,3 @@ app.use(vuetify)
 
 // Montando a aplicação no DOM
 app.mount('#app')
-

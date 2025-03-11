@@ -1,46 +1,54 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
-import Login from '../views/Login.vue'
+import LandingPage from '../views/LandingPage.vue'
+import LoginPage from '../views/LoginPage.vue'
 import Register from '../views/Register.vue'
+import Home from '../views/Home.vue'
 import Songs from '../views/Songs.vue'
-import Playlist from '../views/Playlist.vue'
-import CreatePlaylist from '../views/CreatePlaylist.vue'
 import store from '../store'
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home,
-    meta: { requiresAuth: true }
+    name: 'landing',
+    component: LandingPage,
+    meta: {
+      requiresAuth: false,
+      hideForAuth: true
+    }
   },
   {
     path: '/login',
-    name: 'Login',
-    component: Login
+    name: 'login',
+    component: LoginPage,
+    meta: {
+      requiresAuth: false,
+      hideForAuth: true
+    }
   },
   {
     path: '/register',
-    name: 'Register',
-    component: Register
+    name: 'register',
+    component: Register,
+    meta: {
+      requiresAuth: false,
+      hideForAuth: true
+    }
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: Home,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/songs',
-    name: 'Songs',
+    name: 'songs',
     component: Songs,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/playlist/:id',
-    name: 'Playlist',
-    component: Playlist,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/create-playlist',
-    name: 'CreatePlaylist',
-    component: CreatePlaylist,
-    meta: { requiresAuth: true }
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
 
@@ -49,15 +57,26 @@ const router = createRouter({
   routes
 })
 
-// Proteção de rotas - verificar autenticação
+// Navegação guard
 router.beforeEach((to, from, next) => {
   const isAuthenticated = store.getters.isAuthenticated
   
-  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+  // Se a rota requer autenticação e o usuário não está autenticado
+  if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
-  } else {
+  } 
+  // Se a rota deve ser escondida para usuários autenticados
+  else if (to.meta.hideForAuth && isAuthenticated) {
+    next('/home')
+  } 
+  // Caso especial: redirecionar / para /home quando autenticado
+  else if (to.path === '/' && isAuthenticated) {
+    next('/home')
+  }
+  else {
     next()
   }
 })
 
 export default router
+

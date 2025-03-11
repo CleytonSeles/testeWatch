@@ -1,0 +1,31 @@
+/* Estilos globais */
+:root {
+    --primary-color: #1DB954;
+    --background-color: #121212;
+    --surface-color: #181818;
+    --secondary-color: #191414;
+  }
+  
+  body {
+    background-color: var(--background-color);
+    color: white;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .v-card {
+    border-radius: 8px;
+  }
+  
+  .v-btn {
+    letter-spacing: 0;
+  }
+  
+  .v-list-item__title {
+    font-weight: 500;
+  }
+  
+  /* Melhorar contraste */
+  .theme--dark.v-application {
+    background-color: var(--background-color);
+  }
+  

@@ -1,25 +1,67 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Home from '../views/Home.vue'
+import Login from '../views/Login.vue'
+import Register from '../views/Register.vue'
+import Songs from '../views/Songs.vue'
+import Playlist from '../views/Playlist.vue'
+import CreatePlaylist from '../views/CreatePlaylist.vue'
+import store from '../store'
+
+Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'Home',
+    component: Home,
+    meta: { requiresAuth: true }
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register
+  },
+  {
+    path: '/songs',
+    name: 'Songs',
+    component: Songs,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/playlist/:id',
+    name: 'Playlist',
+    component: Playlist,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/create-playlist',
+    name: 'CreatePlaylist',
+    component: CreatePlaylist,
+    meta: { requiresAuth: true }
   }
 ]
 
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+const router = new VueRouter({
+  mode: 'history',
+  base: process.env.BASE_URL,
   routes
+})
+
+// Proteção de rotas - verificar autenticação
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = store.getters.isAuthenticated
+  
+  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router

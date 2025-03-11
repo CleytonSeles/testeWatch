@@ -1,5 +1,5 @@
 const db = require('../config/db');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs'); 
 
 const UserModel = {
   // Criar um novo usuário

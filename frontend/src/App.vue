@@ -45,11 +45,13 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'App',
-  data: () => ({
-    snackbar: false,
-    snackbarText: '',
-    snackbarColor: 'info'
-  }),
+  data() {
+    return {
+      snackbar: false,
+      snackbarText: '',
+      snackbarColor: 'info'
+    }
+  },
   computed: {
     ...mapGetters(['isAuthenticated', 'getError'])
   },

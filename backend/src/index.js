@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const swaggerConfig = require('./config/swagger');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,6 +9,9 @@ const PORT = process.env.PORT || 3000;
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+// Documentação Swagger
+app.use('/api-docs', swaggerConfig.serve, swaggerConfig.setup);
 
 // Rotas básicas
 app.use('/api/users', require('./routes/users'));
@@ -22,4 +26,5 @@ app.get('/', (req, res) => {
 // Iniciar o servidor
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Swagger documentation available at http://localhost:${PORT}/api-docs`);
 });

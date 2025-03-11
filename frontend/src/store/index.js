@@ -1,10 +1,7 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import axios from 'axios'
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+export default createStore({
   state: {
     user: null,
     token: localStorage.getItem('token') || null,
@@ -14,7 +11,6 @@ export default new Vuex.Store({
     isLoading: false,
     error: null
   },
-  
   mutations: {
     setUser(state, user) {
       state.user = user
@@ -44,7 +40,6 @@ export default new Vuex.Store({
       state.error = error
     }
   },
-  
   actions: {
     // Autenticação
     async register({ commit }, userData) {
@@ -59,7 +54,6 @@ export default new Vuex.Store({
         throw error
       }
     },
-    
     async login({ commit }, credentials) {
       try {
         commit('setLoading', true)
@@ -74,12 +68,10 @@ export default new Vuex.Store({
         throw error
       }
     },
-    
     logout({ commit }) {
       commit('clearAuth')
       // Redirecionar para a página de login
     },
-    
     async fetchUserProfile({ commit }) {
       try {
         commit('setLoading', true)
@@ -92,7 +84,6 @@ export default new Vuex.Store({
         throw error
       }
     },
-    
     // Músicas
     async fetchAllSongs({ commit }) {
       try {
@@ -106,7 +97,6 @@ export default new Vuex.Store({
         throw error
       }
     },
-    
     // Playlists
     async fetchUserPlaylists({ commit }) {
       try {
@@ -120,7 +110,6 @@ export default new Vuex.Store({
         throw error
       }
     },
-    
     async fetchPlaylistById({ commit }, playlistId) {
       try {
         commit('setLoading', true)
@@ -133,7 +122,6 @@ export default new Vuex.Store({
         throw error
       }
     },
-    
     async createPlaylist({ commit, dispatch }, playlistData) {
       try {
         commit('setLoading', true)
@@ -146,7 +134,6 @@ export default new Vuex.Store({
         throw error
       }
     },
-    
     async addSongToPlaylist({ commit, dispatch }, { playlistId, songId }) {
       try {
         commit('setLoading', true)
@@ -159,7 +146,6 @@ export default new Vuex.Store({
         throw error
       }
     },
-    
     async removeSongFromPlaylist({ commit, dispatch }, { playlistId, songId }) {
       try {
         commit('setLoading', true)
@@ -173,7 +159,6 @@ export default new Vuex.Store({
       }
     }
   },
-  
   getters: {
     isAuthenticated(state) {
       return !!state.token

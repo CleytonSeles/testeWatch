@@ -1,0 +1,51 @@
+service: music-streaming-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  environment:
+    NODE_ENV: ${opt:stage, 'dev'}
+    DB_HOST: ${env:DB_HOST}
+    DB_PORT: ${env:DB_PORT}
+    DB_USER: ${env:DB_USER}
+    DB_PASSWORD: ${env:DB_PASSWORD}
+    DB_NAME: ${env:DB_NAME}
+    JWT_SECRET: ${env:JWT_SECRET}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - rds-data:*
+          Resource: '*'
+
+functions:
+  # API principal
+  api:
+    handler: src/handlers/api.handler
+    events:
+      - httpApi:
+          path: /api/{proxy+}
+          method: ANY
+    timeout: 30
+    memorySize: 512
+
+  # Função para scraping musical (executada via evento agendado)
+  updateMusicTrends:
+    handler: src/handlers/trends.updateTrends
+    events:
+      - schedule: rate(6 hours)
+    timeout: 60
+    memorySize: 1024
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+custom:
+  serverless-offline:
+    httpPort: 3000

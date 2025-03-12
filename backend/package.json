@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1692.0",
     "axios": "^1.8.3",
     "bcryptjs": "^2.4.3",
     "cheerio": "^1.0.0",
@@ -21,6 +22,7 @@
     "jsonwebtoken": "^9.0.0",
     "pg": "^8.10.0",
     "puppeteer": "^24.4.0",
+    "serverless-http": "^3.2.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.2"
   },
@@ -29,4 +31,3 @@
     "nodemon": "^2.0.22"
   }
 }
-

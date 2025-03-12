@@ -1,105 +1,299 @@
-# Aplicação de Streaming de Música
+# Music Streaming API
 
-Uma aplicação de streaming de música desenvolvida como teste técnico, onde os usuários podem criar contas, adicionar músicas às suas playlists, categorizar e acompanhar o histórico de reprodução.
+Uma API completa para streaming de música, disponibilizando recursos para gerenciamento de usuários, músicas, playlists e análise de tendências musicais. Implementada em arquitetura serverless utilizando AWS Lambda.
 
-## Tecnologias Utilizadas
+## 📋 Índice
 
-### Frontend
-- **Vue.js** - Framework JavaScript para construção de interfaces
-- **Vuetify** - Biblioteca de componentes UI baseada em Material Design
-- **Vuex** - Gerenciamento de estado centralizado
-- **Vue Router** - Roteamento do lado do cliente
+- [Visão Geral](#visão-geral)
+- [Arquitetura](#arquitetura)
+- [Recursos](#recursos)
+- [Requisitos Técnicos](#requisitos-técnicos)
+- [Configuração e Instalação](#configuração-e-instalação)
+- [Execução Local](#execução-local)
+- [Deploy para AWS Lambda](#deploy-para-aws-lambda)
+- [Documentação da API](#documentação-da-api)
+- [Exemplos de Uso](#exemplos-de-uso)
+- [Estrutura do Código](#estrutura-do-código)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Licença](#licença)
 
-### Backend
-- **Node.js** - Ambiente de execução JavaScript do lado do servidor
-- **Express** - Framework web para Node.js
-- **PostgreSQL** - Banco de dados relacional
-- **JWT** - Autenticação baseada em tokens
+## 🔍 Visão Geral
 
-## Funcionalidades
-- Registro e autenticação de usuários
-- Catálogo de músicas com pesquisa e filtragem
-- Criação e gerenciamento de playlists
-- Adição de músicas a playlists
-- Compartilhamento de playlists (privadas/públicas)
+O Music Streaming API é um serviço backend que permite gerenciar músicas, criar playlists personalizadas e descobrir tendências musicais através de web scraping e RPA (Robotic Process Automation). A API foi construída em uma arquitetura serverless utilizando AWS Lambda, proporcionando escalabilidade automática e redução de custos operacionais.
 
-## Requisitos
-- **Node.js** (v14 ou superior)
-- **PostgreSQL** (v12 ou superior)
-- **npm** ou **yarn**
+## 🏗️ Arquitetura
 
-## Instalação e Configuração
+O projeto está disponível em duas arquiteturas:
 
-### Backend
-Clone o repositório:
+### Versão Container (Docker)
+
+- Backend: Node.js + Express
+- Banco de Dados: PostgreSQL
+- Persistência: Volumes Docker
+- Documentação: Swagger UI
+
+### Versão Serverless (AWS)
+
+- Computação: AWS Lambda
+- API Gateway: Para exposição de endpoints RESTful
+- Banco de Dados: Amazon RDS PostgreSQL
+- Agendamento: CloudWatch Events para scraping periódico
+- Monitoramento: CloudWatch Logs e Métricas
+
+## 🚀 Recursos
+
+- Registro e autenticação de usuários com JWT
+- CRUD completo para músicas e playlists
+- Compartilhamento de playlists (públicas/privadas)
+- Web scraping de tendências musicais
+- Geração automatizada de playlists baseadas em tendências
+- Documentação interativa da API com Swagger
+
+## 💻 Requisitos Técnicos
+
+- Node.js 16+
+- Docker e Docker Compose (para execução em contêiner)
+- Conta AWS (para deploy serverless)
+- AWS CLI configurado
+- Serverless Framework
+- PostgreSQL (para desenvolvimento local sem Docker)
+
+## ⚙️ Configuração e Instalação
+
+### Clonando o Repositório
+
 ```bash
-git clone https://github.com/seu-usuario/music-streaming-app.git
+git clone https://github.com/username/music-streaming-api.git
+cd music-streaming-api
 ```
 
-Navegue até a pasta do backend:
+### Configurando Variáveis de Ambiente
+
+Crie um arquivo `.env` na raiz do projeto:
+
 ```bash
-cd music-streaming-app/backend
+# Para versão Docker
+cp backend/.env.example backend/.env
+
+# Para versão Serverless
+cp backend-serverless/.env.example backend-serverless/.env
 ```
 
-Instale as dependências:
+Configure as variáveis de ambiente:
+
+```env
+# Ambiente
+NODE_ENV=development
+
+# Banco de Dados
+DB_HOST=localhost # Para Docker use: postgres
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=123456 # Ajuste com uma senha segura
+DBNAME=musicstreaming
+
+# Segurança
+JWTSECRET=suachavejwtsegura # Importante: use uma chave forte em produção
+```
+
+### Instalando Dependências
+
 ```bash
+# Para a versão em container
+cd backend
+npm install
+
+# Para a versão serverless
+cd backend-serverless
 npm install
 ```
 
-Configure o ambiente:
-Renomeie o arquivo `.env.example` para `.env` e ajuste as variáveis conforme necessário.
+## 🏃‍♂️ Execução Local
 
-Certifique-se de que o PostgreSQL está instalado e rodando.
+### Usando Docker
 
-Configure o banco de dados:
+O método mais simples para executar o projeto localmente:
+
 ```bash
-node src/config/setup.js
-node src/config/seed.js
+# Na raiz do projeto
+docker-compose up
 ```
 
-Inicie o servidor:
+Isso iniciará:
+
+- PostgreSQL na porta 5432
+- Backend na porta 3000
+- Frontend na porta 8082
+
+### Executando Localmente sem Docker
+
 ```bash
+# Na pasta backend
 npm run dev
 ```
 
-O backend estará rodando em `http://localhost:3000`.
+### Executando a versão serverless localmente
 
-### Frontend
-Navegue até a pasta do frontend:
 ```bash
-cd ../frontend
+# Na pasta backend-serverless
+serverless offline
 ```
 
-Instale as dependências:
+A API estará disponível em: [http://localhost:3000](http://localhost:3000)
+
+A documentação Swagger estará em: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
+## 🚢 Deploy para AWS Lambda
+
+### Pré-requisitos
+
+Instalar AWS CLI e configurar credenciais
+
 ```bash
-npm install
+npm install -g aws-cli
+aws configure
 ```
 
-Inicie o servidor de desenvolvimento:
+Instalar Serverless Framework
+
 ```bash
-npm run serve
+npm install -g serverless
 ```
 
-O frontend estará rodando em `http://localhost:8080`.
+### Preparando o Banco de Dados RDS
 
-## Endpoints da API
+- Crie uma instância RDS PostgreSQL via AWS Console ou CLI
+- Atualize as configurações de banco de dados no `.env` da versão serverless
+- Execute o script de inicialização:
+
+```bash
+cd backend-serverless
+node scripts/setup-db.js
+```
+
+### Deploy da API
+
+```bash
+cd backend-serverless
+serverless deploy
+```
+
+Após o deploy bem-sucedido, você receberá uma URL de endpoint para sua API.
+
+## 📚 Documentação da API
+
+### Endpoints Principais
+
+| Método | Endpoint | Descrição | Autenticação |
+|--------|----------|-----------|--------------|
+| POST   | /api/users/register | Registrar novo usuário | Não |
+| POST   | /api/users/login | Login e obtenção de token JWT | Não |
+| GET    | /api/users/profile | Obter perfil do usuário | Sim |
+| GET    | /api/songs | Listar todas as músicas | Não |
+| POST   | /api/songs | Adicionar nova música | Sim |
+| GET    | /api/songs/{id} | Detalhes de uma música | Não |
+| GET    | /api/playlists | Listar playlists do usuário | Sim |
+| POST   | /api/playlists | Criar nova playlist | Sim |
+| POST   | /api/playlists/{id}/songs | Adicionar música à playlist | Sim |
+| GET    | /api/trends | Obter músicas em tendência | Não |
 
 ### Autenticação
-- `POST /api/users/register` - Registrar um novo usuário
-- `POST /api/users/login` - Fazer login e obter token JWT
 
-### Usuários
-- `GET /api/users/profile` - Obter perfil do usuário atual (autenticado)
+Para endpoints protegidos, inclua o token JWT no cabeçalho:
 
-### Músicas
-- `GET /api/songs` - Listar todas as músicas
-- `GET /api/songs/:id` - Obter detalhes de uma música
-- `GET /api/songs/genre/:genre` - Buscar músicas por gênero
-- `POST /api/songs` - Adicionar nova música (requer autenticação)
+```
+Authorization: Bearer seutokenaqui
+```
 
-### Playlists
-- `GET /api/playlists` - Listar playlists do usuário (requer autenticação)
-- `GET /api/playlists/:id` - Obter detalhes de uma playlist (requer autenticação)
-- `POST /api/playlists` - Criar nova playlist (requer autenticação)
-- `POST /api/playlists/:id/songs` - Adicionar música à playlist (requer autenticação)
-- `DELETE /api/playlists/:id/songs/:songId` - Remover música da playlist (requer autenticação)
+### Documentação Swagger
+
+Uma documentação interativa completa está disponível em:
+
+- Versão local: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+- Versão serverless: `https://seu-api-id.execute-api.us-east-1.amazonaws.com/dev/api-docs`
+
+## 🔍 Exemplos de Uso
+
+### Registrar um Usuário
+
+```bash
+curl -X POST http://localhost:3000/api/users/register \
+  -H "Content-Type: application/json" \
+  -d '{"username": "usuario_teste", "email": "teste@exemplo.com", "password": "senha123"}'
+```
+
+### Fazer Login
+
+```bash
+curl -X POST http://localhost:3000/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "teste@exemplo.com", "password": "senha123"}'
+```
+
+### Criar uma Playlist (Autenticado)
+
+```bash
+curl -X POST http://localhost:3000/api/playlists \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer seu_token_aqui" \
+  -d '{"name": "Minhas Favoritas", "isPublic": true}'
+```
+
+### Obter Músicas em Tendência
+
+```bash
+curl -X GET http://localhost:3000/api/trends
+```
+
+## 📁 Estrutura do Código
+
+### Versão em Container
+
+```
+backend/
+├── db/init/ # Scripts de inicialização do banco
+├── src/
+│   ├── config/ # Configurações (banco, swagger)
+│   ├── controllers/ # Lógica de controle
+│   ├── middleware/ # Middlewares (auth, admin)
+│   ├── models/ # Modelos de dados
+│   ├── routes/ # Definição de rotas
+│   └── services/ # Serviços (scraping, RPA)
+├── .env # Variáveis de ambiente
+├── Dockerfile # Configuração Docker
+├── index.js # Ponto de entrada
+└── package.json # Dependências
+```
+
+### Versão Serverless
+
+```
+backend-serverless/
+├── scripts/ # Scripts utilitários
+├── src/
+│   ├── config/ # Configurações adaptadas para serverless
+│   ├── controllers/ # Controladores
+│   ├── handlers/ # Handlers Lambda
+│   ├── middleware/ # Middlewares
+│   ├── models/ # Modelos
+│   ├── routes/ # Rotas Express
+│   └── services/ # Serviços
+├── .env # Variáveis de ambiente para desenvolvimento
+├── serverless.yml # Configuração do Serverless Framework
+└── package.json # Dependências
+```
+
+## 🛠️ Tecnologias Utilizadas
+
+- Backend: Node.js, Express
+- Banco de Dados: PostgreSQL
+- Autenticação: JWT (JSON Web Tokens)
+- Documentação: Swagger/OpenAPI
+- Cloud: AWS Lambda, API Gateway, RDS
+- Framework Serverless: Serverless Framework
+- Web Scraping: Puppeteer, Cheerio
+- Contêineres: Docker, Docker Compose
+
+## 📄 Licença
+
+Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.

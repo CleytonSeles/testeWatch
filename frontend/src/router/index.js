@@ -4,6 +4,8 @@ import LoginPage from '../views/LoginPage.vue'
 import Register from '../views/Register.vue'
 import Home from '../views/Home.vue'
 import Songs from '../views/Songs.vue'
+import MusicTrends from '../views/MusicTrends.vue'
+import PlaylistDetails from '../views/PlaylistDetails.vue'
 import store from '../store'
 
 const routes = [
@@ -49,6 +51,23 @@ const routes = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/trends',
+    name: 'trends',
+    component: MusicTrends,
+    meta: {
+      requiresAuth: false  // Permitir acesso mesmo para usuários não autenticados
+    }
+  },
+  {
+    path: '/playlist/:id',
+    name: 'playlistDetails',
+    component: PlaylistDetails,
+    meta: {
+      requiresAuth: true
+    },
+    props: true
   }
 ]
 
@@ -64,11 +83,11 @@ router.beforeEach((to, from, next) => {
   // Se a rota requer autenticação e o usuário não está autenticado
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
-  } 
+  }
   // Se a rota deve ser escondida para usuários autenticados
   else if (to.meta.hideForAuth && isAuthenticated) {
     next('/home')
-  } 
+  }
   // Caso especial: redirecionar / para /home quando autenticado
   else if (to.path === '/' && isAuthenticated) {
     next('/home')

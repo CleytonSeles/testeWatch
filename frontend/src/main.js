@@ -7,7 +7,6 @@ import 'vuetify/styles'
 import '@mdi/font/css/materialdesignicons.css'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-
 // Configuração do Vuetify
 const vuetify = createVuetify({
   components,
@@ -26,11 +25,10 @@ const vuetify = createVuetify({
     }
   }
 })
-
 // Configuração global do axios
 import axios from 'axios'
-axios.defaults.baseURL = 'http://localhost:3000/api'
-
+// Usar a variável de ambiente ou o valor padrão
+axios.defaults.baseURL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api'
 // Interceptor para adicionar o token de autenticação
 axios.interceptors.request.use(config => {
   const token = localStorage.getItem('token')
@@ -39,14 +37,11 @@ axios.interceptors.request.use(config => {
   }
   return config
 })
-
 // Criação da aplicação Vue
 const app = createApp(App)
-
 // Registrando plugins e configurações
 app.use(router)
 app.use(store)
 app.use(vuetify)
-
 // Montando a aplicação no DOM
 app.mount('#app')

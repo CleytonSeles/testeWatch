@@ -1,20 +1,32 @@
-FROM node:16-alpine
+FROM node:18-alpine
+
+# Instalar dependências do Chrome/Puppeteer
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    nodejs \
+    python3 \
+    make \
+    g++
+
+# Definir variáveis de ambiente para Puppeteer
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 WORKDIR /app
 
-# Instalar dependências para compilação nativa
-RUN apk add --no-cache make gcc g++ python3
-
 COPY package*.json ./
-
-# Instalar dependências
 RUN npm install
-
-# Se ainda houver problemas com bcrypt especificamente, tente reconstruí-lo
-RUN npm rebuild bcrypt --build-from-source
 
 COPY . .
 
+# Criar link simbólico se seu arquivo principal for app.js e não houver index.js
+RUN if [ -f "app.js" ] && [ ! -f "index.js" ]; then ln -s app.js index.js; fi
+
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]

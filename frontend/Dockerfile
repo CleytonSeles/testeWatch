@@ -1,20 +1,21 @@
-FROM node:16-alpine AS build-stage
+FROM node:16-alpine
 
 WORKDIR /app
 
+# Copiar arquivos de configuração primeiro
 COPY package*.json ./
-
 RUN npm install
 
+# Copiar o resto dos arquivos
 COPY . .
 
-RUN npm run build
+# Garantir que o host esteja configurado para 0.0.0.0
+ENV HOST=0.0.0.0
+ENV PORT=8080
 
-# Estágio de produção
-FROM nginx:stable-alpine AS production-stage
+EXPOSE 8080
 
-COPY --from=build-stage /app/dist /usr/share/nginx/html
+# Executar o servidor de desenvolvimento
+CMD ["npm", "run", "serve"]
 
-EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]

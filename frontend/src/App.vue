@@ -14,15 +14,12 @@
               <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
             </v-avatar>
           </template>
-
           <v-list-item-title class="text-h6">
             {{ getUser ? getUser.username : 'Usuário' }}
           </v-list-item-title>
           <v-list-item-subtitle>Logado</v-list-item-subtitle>
         </v-list-item>
-
         <v-divider></v-divider>
-
         <v-list
           density="compact"
           nav
@@ -36,7 +33,6 @@
             link
           ></v-list-item>
         </v-list>
-
         <template v-slot:append>
           <div class="pa-4">
             <v-btn block color="primary" to="/create-playlist" variant="elevated" class="mb-2">
@@ -50,7 +46,6 @@
           </div>
         </template>
       </v-navigation-drawer>
-
       <!-- Player de música (fixo na parte inferior) para usuários logados -->
       <v-footer
         app
@@ -81,17 +76,14 @@
                 </v-col>
               </v-row>
             </v-col>
-            
             <v-col cols="6">
               <div class="text-center">
                 <v-btn icon>
                   <v-icon>mdi-skip-previous</v-icon>
                 </v-btn>
-
                 <v-btn icon class="mx-4" size="large">
                   <v-icon size="large">mdi-play-circle</v-icon>
                 </v-btn>
-
                 <v-btn icon>
                   <v-icon>mdi-skip-next</v-icon>
                 </v-btn>
@@ -102,7 +94,6 @@
                 hide-details
               ></v-slider>
             </v-col>
-
             <v-col cols="3">
               <v-row justify="end" align="center">
                 <v-btn icon>
@@ -121,12 +112,10 @@
         </v-card>
       </v-footer>
     </template>
-
     <!-- Conteúdo principal -->
     <v-main :class="{ 'authenticated': isAuthenticated }">
       <router-view></router-view>
     </v-main>
-
     <!-- Snackbar para mensagens -->
     <v-snackbar
       v-model="snackbar"
@@ -147,10 +136,8 @@
     </v-snackbar>
   </v-app>
 </template>
-
 <script>
 import { mapGetters, mapActions } from 'vuex';
-
 export default {
   name: 'App',
   data() {
@@ -163,6 +150,7 @@ export default {
         { title: 'Explorar', icon: 'mdi-compass', to: '/songs' },
         { title: 'Biblioteca', icon: 'mdi-music-box-multiple', to: '/home' },
         { title: 'Buscar', icon: 'mdi-magnify', to: '/songs' },
+        { title: 'Tendências', icon: 'mdi-trending-up', to: '/trends' } // Novo item para tendências
       ]
     }
   },
@@ -203,7 +191,6 @@ export default {
   }
 };
 </script>
-
 <style>
 .v-application {
   background-color: #121212 !important;
@@ -213,4 +200,5 @@ export default {
   padding-bottom: 80px !important; /* Ajustar para o tamanho do player */
 }
 </style>
+
 

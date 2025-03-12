@@ -1,12 +1,26 @@
 module.exports = {
-  transpileDependencies: true,
   devServer: {
+    host: '0.0.0.0',
     port: 8080,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true
-      }
-    }
-  }
+    allowedHosts: 'all',
+    client: {
+      webSocketURL: 'auto://0.0.0.0:0/ws',
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
+    },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+    watchFiles: {
+      paths: ['src/**/*', 'public/**/*'],
+      options: {
+        usePolling: true,
+      },
+    },
+  },
+  transpileDependencies: true
 }
+
+

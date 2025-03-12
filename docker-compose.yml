@@ -4,24 +4,31 @@ services:
     container_name: music_streaming_db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: 123456
       POSTGRES_DB: music_streaming
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  
+
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: music_streaming_backend
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_USER=postgres
-      - DB_PASSWORD=postgres
+      - DB_PASSWORD=123456
       - DB_NAME=music_streaming
       - JWT_SECRET=your_secret_key_here
       - PORT=3000
+      # Variáveis para Puppeteer
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+      # Desativar sandbox (necessário no Docker)
+      - PUPPETEER_ARGS=--no-sandbox,--disable-setuid-sandbox
     ports:
       - "3000:3000"
     depends_on:
@@ -29,19 +36,29 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+    # Necessário para Puppeteer
+    cap_add:
+      - SYS_ADMIN
+    shm_size: 1gb
 
   frontend:
     build:
       context: ./frontend
-      target: build-stage
+      dockerfile: Dockerfile
     container_name: music_streaming_frontend
     ports:
-      - "8080:8080"
+      - "8082:8080"
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    command: npm run serve
+    environment:
+      - VUE_APP_API_URL=http://localhost:3000/api
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
+
+
+
 

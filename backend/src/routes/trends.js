@@ -80,3 +80,5 @@ router.post('/personalized-playlist', authMiddleware, trendController.generatePe
 router.get('/rpa-status', authMiddleware, adminMiddleware, trendController.getRPAStatus);
 
 module.exports = router;
+
+

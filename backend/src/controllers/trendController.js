@@ -6,9 +6,9 @@ class TrendController {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit) : 10;
       const trendingSongs = await musicScraperService.getTrendingSongs(limit);
-      
+
       const lastUpdated = await musicScraperService.getLastUpdated();
-      
+
       res.status(200).json({
         success: true,
         lastUpdated,
@@ -23,17 +23,27 @@ class TrendController {
       });
     }
   }
-  
+
   async updateCatalog(req, res) {
     try {
+      console.log('updateCatalog - dados do usuário:', req.userData);
+      
+      // Verificar dados de usuário
+      if (!req.userData) {
+        return res.status(401).json({
+          success: false,
+          message: 'Usuário não autenticado'
+        });
+      }
+
       // Verificar se o usuário é admin
-      if (req.user.role !== 'admin') {
+      if (req.userData.role !== 'admin') {
         return res.status(403).json({
           success: false,
           message: 'Apenas administradores podem atualizar o catálogo'
         });
       }
-      
+
       const result = await musicRpaService.updateCatalogFromTrends();
       res.status(200).json(result);
     } catch (error) {
@@ -45,14 +55,24 @@ class TrendController {
       });
     }
   }
-  
+
   async generatePersonalizedPlaylist(req, res) {
     try {
-      const userId = req.user.id;
+      console.log('generatePersonalizedPlaylist - dados do usuário:', req.userData);
+      
+      const userId = req.userData?.userId;
+      
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Usuário não autenticado ou ID inválido'
+        });
+      }
+      
       const { name } = req.body;
-      
+
       const result = await musicRpaService.generatePersonalizedPlaylist(userId, name);
-      
+
       if (result.success) {
         res.status(201).json(result);
       } else {
@@ -67,17 +87,27 @@ class TrendController {
       });
     }
   }
-  
+
   async getRPAStatus(req, res) {
     try {
+      console.log('getRPAStatus - dados do usuário:', req.userData);
+      
+      // Verificar dados de usuário
+      if (!req.userData) {
+        return res.status(401).json({
+          success: false,
+          message: 'Usuário não autenticado'
+        });
+      }
+
       // Verificar se o usuário é admin
-      if (req.user.role !== 'admin') {
+      if (req.userData.role !== 'admin') {
         return res.status(403).json({
           success: false,
           message: 'Apenas administradores podem ver o status do RPA'
         });
       }
-      
+
       const status = await musicRpaService.getRPAStatus();
       res.status(200).json({
         success: true,

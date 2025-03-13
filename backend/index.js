@@ -6,6 +6,7 @@ const swaggerConfig = require('./src/config/swagger');
 const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const trendsRoutes = require('./src/routes/trends');
 
 // Middlewares
 app.use(cors({
@@ -32,7 +33,7 @@ app.use('/api-docs', swaggerConfig.serve, swaggerConfig.setup);
 app.use('/api/users', require('./src/routes/users'));
 app.use('/api/songs', require('./src/routes/songs'));
 app.use('/api/playlists', require('./src/routes/playlists'));
-app.use('/api/trends', require('./src/routes/trends')); // Nova rota para tendências musicais
+app.use('/api/trends', trendsRoutes); // Nova rota para tendências musicais
 
 // Rota para verificar se o servidor está funcionando
 app.get('/', (req, res) => {

@@ -30,7 +30,7 @@ const options = {
       },
     ],
   },
-  apis: ['./src/routes/*.js'], // Arquivos com anotações JSDoc
+  apis: ['./src/routes/*.js'], // Certifique-se de que este caminho está correto
 };
 
 const specs = swaggerJsdoc(options);
